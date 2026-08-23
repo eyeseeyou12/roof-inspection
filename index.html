@@ -4,18 +4,25 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Roof Inspection Checklist</title>
-<meta name="description" content="Roof assessment checklist that emails a PDF report to the client." />
+<meta name="description" content="Priority Roofing's on-site inspection checklist — generates a PDF report for internal use." />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
 <link rel="apple-touch-icon" href="icons/icon-180.png" />
-<meta name="theme-color" content="#1f2937" />
+<meta name="theme-color" content="#1a4fb0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Roof Inspect" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="app-header">
+  <div class="brand-mark">
+    <div class="brand-badge">Priority</div>
+    <div class="brand-sub">Roofing</div>
+  </div>
   <h1>Roof Inspection Checklist</h1>
   <p class="subtitle">Fill it out on site — the report emails itself.</p>
 </header>
@@ -37,9 +44,9 @@
       </div>
 
       <div class="field">
-        <label for="clientEmail">Client email <span class="req">*</span></label>
-        <input type="email" id="clientEmail" name="clientEmail" required autocomplete="email" placeholder="client@example.com" />
-        <p class="hint">The PDF report is sent here.</p>
+        <label for="reportEmail">Your email <span class="req">*</span></label>
+        <input type="email" id="reportEmail" name="reportEmail" required autocomplete="email" placeholder="you@example.com" />
+        <p class="hint">The PDF report is sent here — for your records, or for prepping the client's estimate later.</p>
       </div>
     </section>
 

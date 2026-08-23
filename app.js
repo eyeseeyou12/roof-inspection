@@ -57,7 +57,7 @@
   function gatherAnswers() {
     var address = document.getElementById("address").value.trim();
     var clientName = document.getElementById("clientName").value.trim();
-    var clientEmail = document.getElementById("clientEmail").value.trim();
+    var reportEmail = document.getElementById("reportEmail").value.trim();
     var notes = document.getElementById("notes").value.trim();
     var roofTypeOther = document.getElementById("roofTypeOther").value.trim();
 
@@ -104,7 +104,7 @@
     return {
       address: address,
       clientName: clientName,
-      clientEmail: clientEmail,
+      reportEmail: reportEmail,
       notes: notes,
       soffitType: toggleState.soffitType || "Not recorded",
       soffitIntake: toggleState.soffitIntake || "Not recorded",
@@ -150,7 +150,7 @@
       doc.text("Client: " + data.clientName, margin, y);
       y += 15;
     }
-    doc.text("Client email: " + data.clientEmail, margin, y);
+    doc.text("Submitted by: " + data.reportEmail, margin, y);
     y += 24;
 
     doc.setFont("helvetica", "bold");
@@ -163,7 +163,7 @@
       margin: { left: margin, right: margin },
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [31, 41, 55] },
+      headStyles: { fillColor: [26, 79, 176] },
       head: [["Item", "Answer"]],
       body: [
         ["Soffit", data.soffitType],
@@ -183,7 +183,7 @@
       margin: { left: margin, right: margin },
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [31, 41, 55] },
+      headStyles: { fillColor: [26, 79, 176] },
       head: [["Item", "Answer"]],
       body: [
         ["Roof type", data.roofType],
@@ -203,7 +203,7 @@
       margin: { left: margin, right: margin },
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [31, 41, 55] },
+      headStyles: { fillColor: [26, 79, 176] },
       head: [["Component", "Present", "Detail"]],
       body: componentBody
     });
@@ -262,8 +262,8 @@
       hiddenForm.appendChild(input);
     }
 
-    addField("to_email", data.clientEmail);
-    addField("client_name", data.clientName || "there");
+    addField("to_email", data.reportEmail);
+    addField("client_name", data.clientName || "Not recorded");
     addField("address", data.address);
 
     var fileInput = document.createElement("input");
@@ -296,7 +296,7 @@
     e.preventDefault();
 
     var addressEl = document.getElementById("address");
-    var emailEl = document.getElementById("clientEmail");
+    var emailEl = document.getElementById("reportEmail");
     var addressVal = addressEl.value.trim();
     var emailVal = emailEl.value.trim();
 
@@ -306,7 +306,7 @@
     setFieldError(emailEl, !emailOk);
 
     if (!addressOk || !emailOk) {
-      setStatus("Enter the address and a valid client email before generating the report.", "error");
+      setStatus("Enter the address and a valid email before generating the report.", "error");
       (addressOk ? emailEl : addressEl).focus();
       return;
     }
@@ -324,11 +324,11 @@
     }
 
     submitBtn.disabled = true;
-    setStatus("Generating PDF and emailing " + data.clientEmail + " …", "pending");
+    setStatus("Generating PDF and sending it to " + data.reportEmail + " …", "pending");
 
     sendReportEmail(data, pdfFile)
       .then(function () {
-        setStatus("Report emailed to " + data.clientEmail + ".", "success");
+        setStatus("Report sent to " + data.reportEmail + ".", "success");
         resetChecklist();
       })
       .catch(function (err) {
