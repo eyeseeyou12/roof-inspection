@@ -1,0 +1,8 @@
+{
+  "name": "roof-inspection",
+  "private": true,
+  "description": "Priority Roofing's on-site roof assessment checklist and PDF-report emailer.",
+  "dependencies": {
+    "nodemailer": "^6.9.0"
+  }
+}

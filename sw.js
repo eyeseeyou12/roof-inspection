@@ -1,14 +1,12 @@
-var CACHE_NAME = "roof-inspection-v2";
+var CACHE_NAME = "roof-inspection-v3";
 var ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
-  "./config.js",
   "./manifest.json",
   "./vendor/jspdf.umd.min.js",
   "./vendor/jspdf.plugin.autotable.min.js",
-  "./vendor/email.min.js",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  var SEND_ENDPOINT = "/.netlify/functions/send-report";
+
   var form = document.getElementById("inspection-form");
   var submitBtn = document.getElementById("submit-btn");
   var statusMsg = document.getElementById("status-msg");
@@ -358,47 +360,36 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
-  function isEmailConfigured() {
-    var cfg = window.EMAILJS_CONFIG;
-    return cfg &&
-      cfg.PUBLIC_KEY && cfg.PUBLIC_KEY.indexOf("REPLACE_WITH") !== 0 &&
-      cfg.SERVICE_ID && cfg.SERVICE_ID.indexOf("REPLACE_WITH") !== 0 &&
-      cfg.TEMPLATE_ID && cfg.TEMPLATE_ID.indexOf("REPLACE_WITH") !== 0;
+  function blobToBase64(blob) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        resolve(String(reader.result).split(",")[1]);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   }
 
   function sendReportEmail(data, pdfFile) {
-    var cfg = window.EMAILJS_CONFIG;
-
-    var hiddenForm = document.createElement("form");
-    hiddenForm.style.display = "none";
-
-    function addField(name, value) {
-      var input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = value;
-      hiddenForm.appendChild(input);
-    }
-
-    addField("to_email", data.reportEmail);
-    addField("client_name", data.clientName || "Not recorded");
-    addField("address", data.address);
-
-    var fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.name = "attachment";
-    hiddenForm.appendChild(fileInput);
-
-    var dataTransfer = new DataTransfer();
-    dataTransfer.items.add(pdfFile);
-    fileInput.files = dataTransfer.files;
-
-    document.body.appendChild(hiddenForm);
-
-    return emailjs.sendForm(cfg.SERVICE_ID, cfg.TEMPLATE_ID, hiddenForm)
-      .finally(function () {
-        document.body.removeChild(hiddenForm);
+    return blobToBase64(pdfFile).then(function (pdfBase64) {
+      return fetch(SEND_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: data.reportEmail,
+          address: data.address,
+          clientName: data.clientName || "Not recorded",
+          filename: pdfFile.name,
+          pdfBase64: pdfBase64
+        })
+      }).then(function (res) {
+        if (res.ok) return;
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          throw new Error(body.error || ("Send failed (" + res.status + ")"));
+        });
       });
+    });
   }
 
   function resetChecklist() {
@@ -435,12 +426,6 @@
     var blob = doc.output("blob");
     var pdfFile = new File([blob], filename, { type: "application/pdf" });
 
-    if (!isEmailConfigured()) {
-      downloadBlob(blob, filename);
-      setStatus("EmailJS isn't set up yet, so the PDF just downloaded instead. See README.md to turn on emailing.", "error");
-      return;
-    }
-
     submitBtn.disabled = true;
     setStatus("Generating PDF and sending it to " + data.reportEmail + " …", "pending");
 
@@ -450,7 +435,7 @@
         resetChecklist();
       })
       .catch(function (err) {
-        console.error("EmailJS send failed:", err);
+        console.error("Send failed:", err);
         downloadBlob(blob, filename);
         setStatus("Couldn't send the email, so the PDF downloaded instead. Check your connection and try again, or share the downloaded file directly.", "error");
       })
@@ -459,11 +444,7 @@
       });
   });
 
-  // ---- Init EmailJS + service worker ----
-  if (isEmailConfigured() && window.emailjs) {
-    emailjs.init({ publicKey: window.EMAILJS_CONFIG.PUBLIC_KEY });
-  }
-
+  // ---- Service worker ----
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("sw.js").catch(function () {});
