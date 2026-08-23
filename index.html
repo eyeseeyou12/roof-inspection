@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Roof Inspection Checklist</title>
+<meta name="description" content="Roof assessment checklist that emails a PDF report to the client." />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="icons/icon-180.png" />
+<meta name="theme-color" content="#1f2937" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Roof Inspect" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="app-header">
+  <h1>Roof Inspection Checklist</h1>
+  <p class="subtitle">Fill it out on site — the report emails itself.</p>
+</header>
+
+<main>
+  <form id="inspection-form" novalidate>
+
+    <section class="card" aria-labelledby="h-basics">
+      <h2 id="h-basics">Property</h2>
+
+      <div class="field">
+        <label for="address">Address <span class="req">*</span></label>
+        <input type="text" id="address" name="address" required autocomplete="street-address" placeholder="123 Main St, City, ST" />
+      </div>
+
+      <div class="field">
+        <label for="clientName">Client name <span class="optional">(optional)</span></label>
+        <input type="text" id="clientName" name="clientName" autocomplete="name" placeholder="Jane Homeowner" />
+      </div>
+
+      <div class="field">
+        <label for="clientEmail">Client email <span class="req">*</span></label>
+        <input type="email" id="clientEmail" name="clientEmail" required autocomplete="email" placeholder="client@example.com" />
+        <p class="hint">The PDF report is sent here.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-soffit">
+      <h2 id="h-soffit">Soffit &amp; Fascia</h2>
+
+      <div class="field">
+        <span class="q-label">Soffit</span>
+        <div class="toggle-group" data-name="soffitType" role="radiogroup" aria-label="Soffit type">
+          <button type="button" class="toggle" data-value="Open">Open</button>
+          <button type="button" class="toggle" data-value="Closed">Closed</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Existing soffit intake?</span>
+        <div class="toggle-group yesno" data-name="soffitIntake" role="radiogroup" aria-label="Existing soffit intake">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Gable vents?</span>
+        <div class="toggle-group yesno" data-name="gableVents" role="radiogroup" aria-label="Gable vents">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Fascia damage / rot?</span>
+        <div class="toggle-group yesno" data-name="fasciaDamage" role="radiogroup" aria-label="Fascia damage or rot">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Drip edge existing?</span>
+        <div class="toggle-group yesno" data-name="dripEdge" role="radiogroup" aria-label="Drip edge existing">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-roof">
+      <h2 id="h-roof">Roof Basics</h2>
+
+      <div class="field">
+        <span class="q-label">Roof type</span>
+        <div class="toggle-group" data-name="roofType" role="radiogroup" aria-label="Roof type">
+          <button type="button" class="toggle" data-value="Architectural">Architectural</button>
+          <button type="button" class="toggle" data-value="3-Tab">3-Tab</button>
+          <button type="button" class="toggle" data-value="Other">Other</button>
+        </div>
+        <input type="text" id="roofTypeOther" name="roofTypeOther" class="hidden-field" placeholder="Describe roof type" />
+      </div>
+
+      <div class="field">
+        <span class="q-label">Stories</span>
+        <div class="toggle-group" data-name="stories" role="radiogroup" aria-label="Number of stories">
+          <button type="button" class="toggle" data-value="One story">One story</button>
+          <button type="button" class="toggle" data-value="Two story">Two story</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-components">
+      <h2 id="h-components">Existing Roof Components</h2>
+      <p class="section-hint">Check what's present. Add quantities where you can.</p>
+
+      <div class="component-row" data-component="Box vents">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Box vents</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Turtle vent">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Turtle vent</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Ridge vent">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Ridge vent</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty / linear ft" placeholder="Qty / linear ft" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Rain cap(s)">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Rain cap(s)</label>
+        <div class="qty-row hidden-field sizes">
+          <div class="size-field">
+            <label>3-5"</label>
+            <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="3-5&quot; Qty" placeholder="Qty" />
+          </div>
+          <div class="size-field">
+            <label>6"+</label>
+            <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="6&quot;+ Qty" placeholder="Qty" />
+          </div>
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Pipe jacks">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Pipe jacks</label>
+        <div class="qty-row hidden-field sizes">
+          <div class="size-field">
+            <label>1.5"</label>
+            <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="1.5&quot; Qty" placeholder="Qty" />
+          </div>
+          <div class="size-field">
+            <label>2"</label>
+            <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="2&quot; Qty" placeholder="Qty" />
+          </div>
+          <div class="size-field">
+            <label>3"</label>
+            <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="3&quot; Qty" placeholder="Qty" />
+          </div>
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Bathroom vent">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Bathroom vent</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Dryer vent">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Dryer vent</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Satellite dish">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Satellite dish</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Roof intake ventilation">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Roof intake ventilation</label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Chimney">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Chimney</label>
+        <div class="qty-row hidden-field">
+          <span class="q-label small">Existing cricket?</span>
+          <div class="toggle-group" data-name="chimneyCricket" role="radiogroup" aria-label="Existing cricket">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+            <button type="button" class="toggle" data-value="N/A">N/A</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Other">
+        <label class="check-label"><input type="checkbox" class="comp-check" /> Other roof component(s)</label>
+        <div class="qty-row hidden-field">
+          <input type="text" class="qty-text" placeholder="Describe" />
+          <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-notes">
+      <h2 id="h-notes">Additional Notes</h2>
+      <div class="field">
+        <textarea id="notes" name="notes" rows="4" placeholder="Anything else worth noting..."></textarea>
+      </div>
+    </section>
+
+    <div class="submit-area">
+      <button type="submit" id="submit-btn" class="primary-btn">Generate &amp; Email Report</button>
+      <p id="status-msg" class="status-msg" role="status" aria-live="polite"></p>
+    </div>
+
+  </form>
+</main>
+
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/jspdf.plugin.autotable.min.js"></script>
+<script src="vendor/email.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
