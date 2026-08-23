@@ -13,7 +13,7 @@ This part has to be done by hand in a browser (it's an OAuth login to the Gmail 
 3. **Create an Email Template:** Dashboard → *Email Templates* → *Create New Template*. Set it up like this:
    - **To Email:** `{{to_email}}` (this is the inspector's own email entered on the form, not the client's)
    - **From Name:** `Priority Roofing`
-   - **Subject:** `Roof Assessment Details – {{address}}`
+   - **Subject:** `Inspection Details - {{address}}`
    - **Content:** something like:
      ```
      Inspection report attached.
