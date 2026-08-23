@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Roof Inspection Checklist</title>
-<meta name="description" content="Priority Roofing's on-site inspection checklist — generates a PDF report for internal use." />
+<title>Roof Assessment Details</title>
+<meta name="description" content="Priority Roofing's on-site roof assessment checklist — generates a PDF report for internal use." />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" />
 <link rel="apple-touch-icon" href="icons/icon-180.png" />
 <meta name="theme-color" content="#1a4fb0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Roof Inspect" />
+<meta name="apple-mobile-web-app-title" content="Roof Assess" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&display=swap" rel="stylesheet" />
@@ -23,7 +23,7 @@
     <div class="brand-badge">Priority</div>
     <div class="brand-sub">Roofing</div>
   </div>
-  <h1>Roof Inspection Checklist</h1>
+  <h1>Roof Assessment Details</h1>
   <p class="subtitle">Fill it out on site — the report emails itself.</p>
 </header>
 
@@ -47,6 +47,29 @@
         <label for="reportEmail">Your email <span class="req">*</span></label>
         <input type="email" id="reportEmail" name="reportEmail" required autocomplete="email" placeholder="you@example.com" />
         <p class="hint">The PDF report is sent here — for your records, or for prepping the client's estimate later.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-leak">
+      <h2 id="h-leak">Active Leak</h2>
+
+      <div class="field">
+        <span class="q-label">Active leak?</span>
+        <div class="toggle-group yesno" data-name="activeLeak" role="radiogroup" aria-label="Active leak">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div id="leakDetails" class="hidden-field">
+        <div class="field">
+          <label for="leakLocation">Location</label>
+          <input type="text" id="leakLocation" placeholder="e.g. Over kitchen, north slope" />
+        </div>
+        <div class="field">
+          <label for="leakCause">Cause</label>
+          <input type="text" id="leakCause" placeholder="e.g. Cracked flashing" />
+        </div>
       </div>
     </section>
 
@@ -219,6 +242,144 @@
           <input type="text" class="qty-text" placeholder="Describe" />
           <input type="number" min="0" inputmode="numeric" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
         </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-storm">
+      <h2 id="h-storm">Storm Damage</h2>
+      <p class="section-hint">Check each slope for wind or hail damage.</p>
+
+      <div class="slope-block" data-slope="Left">
+        <h3 class="slope-title">Left Slope</h3>
+        <div class="field">
+          <span class="q-label small">Wind damage?</span>
+          <div class="toggle-group yesno" data-name="windLeft" role="radiogroup" aria-label="Left slope wind damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="windQtyLeft" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+        </div>
+        <div class="field">
+          <span class="q-label small">Hail damage?</span>
+          <div class="toggle-group yesno" data-name="hailLeft" role="radiogroup" aria-label="Left slope hail damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="hailQtyLeft" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+        </div>
+      </div>
+
+      <div class="slope-block" data-slope="Right">
+        <h3 class="slope-title">Right Slope</h3>
+        <div class="field">
+          <span class="q-label small">Wind damage?</span>
+          <div class="toggle-group yesno" data-name="windRight" role="radiogroup" aria-label="Right slope wind damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="windQtyRight" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+        </div>
+        <div class="field">
+          <span class="q-label small">Hail damage?</span>
+          <div class="toggle-group yesno" data-name="hailRight" role="radiogroup" aria-label="Right slope hail damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="hailQtyRight" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+        </div>
+      </div>
+
+      <div class="slope-block" data-slope="Front">
+        <h3 class="slope-title">Front Slope</h3>
+        <div class="field">
+          <span class="q-label small">Wind damage?</span>
+          <div class="toggle-group yesno" data-name="windFront" role="radiogroup" aria-label="Front slope wind damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="windQtyFront" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+        </div>
+        <div class="field">
+          <span class="q-label small">Hail damage?</span>
+          <div class="toggle-group yesno" data-name="hailFront" role="radiogroup" aria-label="Front slope hail damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="hailQtyFront" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+        </div>
+      </div>
+
+      <div class="slope-block" data-slope="Back">
+        <h3 class="slope-title">Back Slope</h3>
+        <div class="field">
+          <span class="q-label small">Wind damage?</span>
+          <div class="toggle-group yesno" data-name="windBack" role="radiogroup" aria-label="Back slope wind damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="windQtyBack" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+        </div>
+        <div class="field">
+          <span class="q-label small">Hail damage?</span>
+          <div class="toggle-group yesno" data-name="hailBack" role="radiogroup" aria-label="Back slope hail damage">
+            <button type="button" class="toggle" data-value="Yes">Yes</button>
+            <button type="button" class="toggle" data-value="No">No</button>
+          </div>
+          <input type="number" min="0" inputmode="numeric" id="hailQtyBack" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-collateral">
+      <h2 id="h-collateral">Collateral Damage</h2>
+
+      <div class="field">
+        <span class="q-label">Window screens</span>
+        <div class="toggle-group yesno" data-name="collWindowScreens" role="radiogroup" aria-label="Window screens damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Window aluminum/vinyl trim</span>
+        <div class="toggle-group yesno" data-name="collWindowTrim" role="radiogroup" aria-label="Window aluminum or vinyl trim damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Siding damage</span>
+        <div class="toggle-group yesno" data-name="collSiding" role="radiogroup" aria-label="Siding damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Garage door</span>
+        <div class="toggle-group yesno" data-name="collGarageDoor" role="radiogroup" aria-label="Garage door damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">AC unit screen</span>
+        <div class="toggle-group yesno" data-name="collACScreen" role="radiogroup" aria-label="AC unit screen damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Other</span>
+        <div class="toggle-group yesno" data-name="collMisc" role="radiogroup" aria-label="Other collateral damage">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+        <input type="text" id="collMiscDesc" class="hidden-field" placeholder="Describe" />
       </div>
     </section>
 

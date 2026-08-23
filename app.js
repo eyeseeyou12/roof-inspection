@@ -27,6 +27,29 @@
       var other = document.getElementById("roofTypeOther");
       other.classList.toggle("visible", value === "Other");
       if (value !== "Other") other.value = "";
+      return;
+    }
+
+    if (name === "activeLeak") {
+      document.getElementById("leakDetails").classList.toggle("visible", value === "Yes");
+      return;
+    }
+
+    if (name === "collMisc") {
+      document.getElementById("collMiscDesc").classList.toggle("visible", value === "Yes");
+      return;
+    }
+
+    if (/^wind[A-Z]/.test(name)) {
+      var windQty = document.getElementById("windQty" + name.slice(4));
+      if (windQty) windQty.classList.toggle("visible", value === "Yes");
+      return;
+    }
+
+    if (/^hail[A-Z]/.test(name)) {
+      var hailQty = document.getElementById("hailQty" + name.slice(4));
+      if (hailQty) hailQty.classList.toggle("visible", value === "Yes");
+      return;
     }
   }
 
@@ -101,6 +124,35 @@
       components.push({ name: name, present: "Yes", detail: qtyVal ? "Qty: " + qtyVal : "-" });
     });
 
+    var activeLeak = toggleState.activeLeak || "Not recorded";
+    var leakLocation = document.getElementById("leakLocation").value.trim();
+    var leakCause = document.getElementById("leakCause").value.trim();
+
+    var slopes = ["Left", "Right", "Front", "Back"].map(function (slope) {
+      var wind = toggleState["wind" + slope] || "Not recorded";
+      var hail = toggleState["hail" + slope] || "Not recorded";
+      var windQty = document.getElementById("windQty" + slope).value.trim();
+      var hailQty = document.getElementById("hailQty" + slope).value.trim();
+      return {
+        slope: slope,
+        wind: wind,
+        windQty: wind === "Yes" && windQty ? windQty : "-",
+        hail: hail,
+        hailQty: hail === "Yes" && hailQty ? hailQty : "-"
+      };
+    });
+
+    var collMiscValue = toggleState.collMisc || "Not recorded";
+    var collMiscDesc = document.getElementById("collMiscDesc").value.trim();
+    var collateral = [
+      { name: "Window screens", value: toggleState.collWindowScreens || "Not recorded" },
+      { name: "Window aluminum/vinyl trim", value: toggleState.collWindowTrim || "Not recorded" },
+      { name: "Siding damage", value: toggleState.collSiding || "Not recorded" },
+      { name: "Garage door", value: toggleState.collGarageDoor || "Not recorded" },
+      { name: "AC unit screen", value: toggleState.collACScreen || "Not recorded" },
+      { name: "Other" + (collMiscValue === "Yes" && collMiscDesc ? " (" + collMiscDesc + ")" : ""), value: collMiscValue }
+    ];
+
     return {
       address: address,
       clientName: clientName,
@@ -113,7 +165,12 @@
       dripEdge: toggleState.dripEdge || "Not recorded",
       roofType: roofTypeLabel || "Not recorded",
       stories: toggleState.stories || "Not recorded",
-      components: components
+      components: components,
+      activeLeak: activeLeak,
+      leakLocation: activeLeak === "Yes" && leakLocation ? leakLocation : "-",
+      leakCause: activeLeak === "Yes" && leakCause ? leakCause : "-",
+      slopes: slopes,
+      collateral: collateral
     };
   }
 
@@ -124,10 +181,18 @@
     var margin = 48;
     var y = margin;
     var pageWidth = doc.internal.pageSize.getWidth();
+    var pageHeight = doc.internal.pageSize.getHeight();
+
+    function ensureSpace(minRemaining) {
+      if (y + minRemaining > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+    }
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
-    doc.text("Roof Inspection Report", margin, y);
+    doc.text("Roof Assessment Details", margin, y);
     y += 22;
 
     doc.setFont("helvetica", "normal");
@@ -153,11 +218,27 @@
     doc.text("Submitted by: " + data.reportEmail, margin, y);
     y += 24;
 
+    ensureSpace(50);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Active Leak", margin, y);
+    y += 16;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("Active leak: " + data.activeLeak, margin, y);
+    y += 15;
+    if (data.activeLeak === "Yes") {
+      doc.text("Location: " + data.leakLocation, margin, y);
+      y += 15;
+      doc.text("Cause: " + data.leakCause, margin, y);
+      y += 15;
+    }
+    y += 9;
+
+    ensureSpace(50);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text("Soffit & Fascia", margin, y);
-    y += 6;
-    y = doc.autoTable ? y : y;
     doc.autoTable({
       startY: y + 6,
       margin: { left: margin, right: margin },
@@ -175,6 +256,7 @@
     });
     y = doc.lastAutoTable.finalY + 20;
 
+    ensureSpace(50);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text("Roof Basics", margin, y);
@@ -192,6 +274,7 @@
     });
     y = doc.lastAutoTable.finalY + 20;
 
+    ensureSpace(50);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text("Existing Roof Components", margin, y);
@@ -209,7 +292,42 @@
     });
     y = doc.lastAutoTable.finalY + 20;
 
+    ensureSpace(50);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Storm Damage", margin, y);
+    doc.autoTable({
+      startY: y + 6,
+      margin: { left: margin, right: margin },
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 5 },
+      headStyles: { fillColor: [26, 79, 176] },
+      head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
+      body: data.slopes.map(function (s) {
+        return [s.slope, s.wind, s.windQty, s.hail, s.hailQty];
+      })
+    });
+    y = doc.lastAutoTable.finalY + 20;
+
+    ensureSpace(50);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Collateral Damage", margin, y);
+    doc.autoTable({
+      startY: y + 6,
+      margin: { left: margin, right: margin },
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 5 },
+      headStyles: { fillColor: [26, 79, 176] },
+      head: [["Item", "Damage"]],
+      body: data.collateral.map(function (c) {
+        return [c.name, c.value];
+      })
+    });
+    y = doc.lastAutoTable.finalY + 20;
+
     if (data.notes) {
+      ensureSpace(50);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
       doc.text("Additional Notes", margin, y);
@@ -226,7 +344,7 @@
   function fileNameFor(data) {
     var safeAddress = (data.address || "report").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-");
     var dateStr = new Date().toISOString().slice(0, 10);
-    return "Roof-Inspection-" + (safeAddress || "report") + "-" + dateStr + ".pdf";
+    return "Roof-Assessment-" + (safeAddress || "report") + "-" + dateStr + ".pdf";
   }
 
   function downloadBlob(blob, filename) {

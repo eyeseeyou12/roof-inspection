@@ -1,7 +1,7 @@
 {
-  "name": "Roof Inspection Checklist",
-  "short_name": "Roof Inspect",
-  "description": "Roof assessment checklist that emails a PDF report to the client.",
+  "name": "Roof Assessment Details",
+  "short_name": "Roof Assess",
+  "description": "Priority Roofing's on-site roof assessment checklist — emails a PDF report for internal use.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

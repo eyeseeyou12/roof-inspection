@@ -1,4 +1,4 @@
-# Roof Inspection Checklist
+# Roof Assessment Details
 
 An installable, phone-friendly checklist for on-site roof assessments, styled to match the Priority Roofing brand. Fill it out during the inspection, tap **Generate & Email Report**, and a PDF report gets emailed to whoever filled it out — sent from `geplutoroofs@gmail.com`. This is an internal report (inspection details), not something sent to the client — it's meant to be used afterward when preparing the client's actual estimate or report.
 
@@ -13,7 +13,7 @@ This part has to be done by hand in a browser (it's an OAuth login to the Gmail 
 3. **Create an Email Template:** Dashboard → *Email Templates* → *Create New Template*. Set it up like this:
    - **To Email:** `{{to_email}}` (this is the inspector's own email entered on the form, not the client's)
    - **From Name:** `Priority Roofing`
-   - **Subject:** `Roof Inspection Report – {{address}}`
+   - **Subject:** `Roof Assessment Details – {{address}}`
    - **Content:** something like:
      ```
      Inspection report attached.
@@ -57,9 +57,12 @@ Then in the new GitHub repo: **Settings → Pages → Deploy from branch → mai
 ## What the checklist covers
 
 - Property address, optional client name, your email (where the PDF report is sent — for internal records, not the client)
+- Active leak: yes/no, plus location and cause if yes
 - Soffit (open/closed), existing soffit intake, gable vents, fascia damage/rot, drip edge
 - Roof type (architectural / 3-tab / other), one or two story
 - Existing roof components with optional quantity/size: box vents, turtle vent, ridge vent, rain caps (3–5" / 6"+), pipe jacks (1.5" / 2" / 3"), bathroom vent, dryer vent, satellite dish, roof intake ventilation, chimney (+ existing cricket), other
+- Storm damage per slope (left/right/front/back): wind damage + qty of wind-damaged shingles, hail damage + hail hits in test square
+- Collateral damage checklist: window screens, window aluminum/vinyl trim, siding, garage door, AC unit screen, other (with description)
 - Free-text additional notes
 
 If sending fails (e.g. no signal on site), the PDF downloads locally instead so nothing is lost — just re-send or share it manually later.

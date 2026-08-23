@@ -226,6 +226,34 @@ textarea {
   display: block;
 }
 
+.qty-followup.visible {
+  margin-top: 0.6rem;
+}
+
+.slope-block {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.slope-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.slope-block:first-child {
+  padding-top: 0;
+}
+
+.slope-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--brand-black);
+}
+
 .component-row {
   padding: 0.7rem 0;
   border-bottom: 1px solid var(--card-border);
