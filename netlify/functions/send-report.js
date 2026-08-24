@@ -10,8 +10,10 @@ exports.handler = async function (event) {
 
   var allowedOrigin = process.env.ALLOWED_ORIGIN;
   if (allowedOrigin) {
-    var origin = (event.headers && (event.headers.origin || event.headers.referer)) || "";
-    if (origin.indexOf(allowedOrigin) !== 0) {
+    var origin = (event.headers && event.headers.origin) || "";
+    var normalizedOrigin = origin.replace(/\/+$/, "");
+    var normalizedAllowed = allowedOrigin.trim().replace(/\/+$/, "");
+    if (normalizedOrigin !== normalizedAllowed) {
       return { statusCode: 403, body: "Forbidden" };
     }
   }
