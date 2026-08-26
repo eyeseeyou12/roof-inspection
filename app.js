@@ -10,7 +10,7 @@
     "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
     "qtyRainCaps35", "qtyRainCaps6",
     "qtyPipeJacks15", "qtyPipeJacks2", "qtyPipeJacks3",
-    "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtyRoofIntakeVent",
+    "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtySolarPanels", "qtyRoofIntakeVent",
     "otherDesc", "qtyOther",
     "windQtyLeft", "hailQtyLeft", "windQtyRight", "hailQtyRight",
     "windQtyFront", "hailQtyFront", "windQtyBack", "hailQtyBack"
@@ -18,7 +18,7 @@
 
   var CHECKBOX_IDS = [
     "checkBoxVents", "checkTurtleVent", "checkRidgeVent", "checkRainCaps",
-    "checkPipeJacks", "checkBathroomVent", "checkDryerVent", "checkSatelliteDish",
+    "checkPipeJacks", "checkBathroomVent", "checkDryerVent", "checkSatelliteDish", "checkSolarPanels",
     "checkRoofIntakeVent", "checkChimney", "checkOther"
   ];
 
@@ -309,6 +309,10 @@
   }
 
   // ---- PDF generation ----
+  function hasValue(v) {
+    return v !== "Not recorded" && v !== "-" && v !== undefined && v !== "";
+  }
+
   function buildPdf(data) {
     var jsPDFCtor = window.jspdf.jsPDF;
     var doc = new jsPDFCtor({ unit: "pt", format: "letter" });
@@ -322,6 +326,25 @@
         doc.addPage();
         y = margin;
       }
+    }
+
+    function sectionTable(title, rows) {
+      var filtered = rows.filter(function (r) { return hasValue(r[1]); });
+      if (!filtered.length) return;
+      ensureSpace(50);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text(title, margin, y);
+      doc.autoTable({
+        startY: y + 6,
+        margin: { left: margin, right: margin },
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 5 },
+        headStyles: { fillColor: [26, 79, 176] },
+        head: [["Item", "Answer"]],
+        body: filtered
+      });
+      y = doc.lastAutoTable.finalY + 20;
     }
 
     doc.setFont("helvetica", "bold");
@@ -351,132 +374,127 @@
     }
     doc.text("Submitted by: " + data.reportEmail, margin, y);
     y += 15;
-    doc.text("Job source: " + data.jobSource, margin, y);
-    y += 24;
-
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Roof Basics", margin, y);
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Item", "Answer"]],
-      body: [
-        ["Roof type", data.roofType],
-        ["Stories", data.stories],
-        ["Roof age", data.roofAge],
-        ["Granule loss / deterioration", data.granuleLoss]
-      ]
-    });
-    y = doc.lastAutoTable.finalY + 20;
-
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Active Leak", margin, y);
-    y += 16;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.text("Active leak: " + data.activeLeak, margin, y);
-    y += 15;
-    if (data.activeLeak === "Yes") {
-      doc.text("Location: " + data.leakLocation, margin, y);
-      y += 15;
-      doc.text("Cause: " + data.leakCause, margin, y);
+    if (hasValue(data.jobSource)) {
+      doc.text("Job source: " + data.jobSource, margin, y);
       y += 15;
     }
     y += 9;
 
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Soffit & Fascia", margin, y);
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Item", "Answer"]],
-      body: [
-        ["Soffit", data.soffitType],
-        ["Existing soffit intake", data.soffitIntake],
-        ["Gable vents", data.gableVents],
-        ["Fascia damage / rot", data.fasciaDamage],
-        ["Existing 1x2 trim", data.fasciaTrim],
-        ["Fascia repair severity", data.fasciaSeverity],
-        ["Drip edge existing", data.dripEdge]
-      ]
-    });
-    y = doc.lastAutoTable.finalY + 20;
+    sectionTable("Roof Basics", [
+      ["Roof type", data.roofType],
+      ["Stories", data.stories],
+      ["Estimated roof age", data.roofAge],
+      ["Granule loss / deterioration", data.granuleLoss]
+    ]);
 
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Existing Roof Components", margin, y);
-    var componentBody = data.components.length
-      ? data.components.map(function (c) { return [c.name, c.present, c.detail]; })
-      : [["None recorded", "-", "-"]];
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Component", "Present", "Detail"]],
-      body: componentBody
-    });
-    y = doc.lastAutoTable.finalY + 20;
-
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Storm Damage", margin, y);
-    y += 16;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.text("Storm damage: " + data.stormDamage, margin, y);
-    y += 15;
-    if (data.stormDamage === "Yes") {
-      doc.text("Overall severity: " + data.stormSeverity, margin, y);
-      y += 15;
-      doc.autoTable({
-        startY: y + 6,
-        margin: { left: margin, right: margin },
-        theme: "grid",
-        styles: { fontSize: 10, cellPadding: 5 },
-        headStyles: { fillColor: [26, 79, 176] },
-        head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
-        body: data.slopes.map(function (s) {
-          return [s.slope, s.wind, s.windQty, s.hail, s.hailQty];
-        })
-      });
-      y = doc.lastAutoTable.finalY + 20;
-    } else {
-      y += 9;
-    }
-
-    if (data.stormDamage === "Yes") {
+    if (hasValue(data.activeLeak)) {
       ensureSpace(50);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
-      doc.text("Collateral Damage", margin, y);
+      doc.text("Active Leak", margin, y);
+      y += 16;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text("Active leak: " + data.activeLeak, margin, y);
+      y += 15;
+      if (hasValue(data.leakLocation)) {
+        doc.text("Location: " + data.leakLocation, margin, y);
+        y += 15;
+      }
+      if (hasValue(data.leakCause)) {
+        doc.text("Cause: " + data.leakCause, margin, y);
+        y += 15;
+      }
+      y += 9;
+    }
+
+    sectionTable("Soffit & Fascia", [
+      ["Soffit", data.soffitType],
+      ["Existing soffit intake", data.soffitIntake],
+      ["Gable vents", data.gableVents],
+      ["Fascia damage / rot", data.fasciaDamage],
+      ["Existing 1x2 trim", data.fasciaTrim],
+      ["Fascia repair severity", data.fasciaSeverity],
+      ["Drip edge existing", data.dripEdge]
+    ]);
+
+    if (data.components.length) {
+      ensureSpace(50);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Existing Roof Components", margin, y);
       doc.autoTable({
         startY: y + 6,
         margin: { left: margin, right: margin },
         theme: "grid",
         styles: { fontSize: 10, cellPadding: 5 },
         headStyles: { fillColor: [26, 79, 176] },
-        head: [["Item", "Damage"]],
-        body: data.collateral.map(function (c) {
-          return [c.name, c.value];
-        })
+        head: [["Component", "Present", "Detail"]],
+        body: data.components.map(function (c) { return [c.name, c.present, c.detail]; })
       });
       y = doc.lastAutoTable.finalY + 20;
+    }
+
+    if (hasValue(data.stormDamage)) {
+      ensureSpace(50);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Storm Damage", margin, y);
+      y += 16;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text("Storm damage: " + data.stormDamage, margin, y);
+      y += 15;
+
+      if (data.stormDamage === "Yes") {
+        if (hasValue(data.stormSeverity)) {
+          doc.text("Overall severity: " + data.stormSeverity, margin, y);
+          y += 15;
+        }
+        var slopeRows = data.slopes.filter(function (s) { return hasValue(s.wind) || hasValue(s.hail); });
+        if (slopeRows.length) {
+          doc.autoTable({
+            startY: y + 6,
+            margin: { left: margin, right: margin },
+            theme: "grid",
+            styles: { fontSize: 10, cellPadding: 5 },
+            headStyles: { fillColor: [26, 79, 176] },
+            head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
+            body: slopeRows.map(function (s) {
+              return [
+                s.slope,
+                hasValue(s.wind) ? s.wind : "",
+                hasValue(s.windQty) ? s.windQty : "",
+                hasValue(s.hail) ? s.hail : "",
+                hasValue(s.hailQty) ? s.hailQty : ""
+              ];
+            })
+          });
+          y = doc.lastAutoTable.finalY + 20;
+        } else {
+          y += 9;
+        }
+
+        var collateralRows = data.collateral.filter(function (c) { return hasValue(c.value); });
+        if (collateralRows.length) {
+          ensureSpace(50);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.text("Collateral Damage", margin, y);
+          doc.autoTable({
+            startY: y + 6,
+            margin: { left: margin, right: margin },
+            theme: "grid",
+            styles: { fontSize: 10, cellPadding: 5 },
+            headStyles: { fillColor: [26, 79, 176] },
+            head: [["Item", "Damage"]],
+            body: collateralRows.map(function (c) { return [c.name, c.value]; })
+          });
+          y = doc.lastAutoTable.finalY + 20;
+        }
+      } else {
+        y += 9;
+      }
     }
 
     if (data.notes) {

@@ -24,7 +24,7 @@
     <div class="brand-sub">Roofing</div>
   </div>
   <h1>Roof Assessment Details</h1>
-  <p class="subtitle">Fill it out on site — the report emails itself.</p>
+  <p class="subtitle">Fill it out on the job site — be as detailed as you see fit. The only required fields are the address and your email; an inspection details report will be emailed to you.</p>
 </header>
 
 <main>
@@ -46,7 +46,7 @@
       <div class="field">
         <label for="reportEmail">Your email <span class="req">*</span></label>
         <input type="email" id="reportEmail" name="reportEmail" required autocomplete="email" placeholder="you@example.com" />
-        <p class="hint">The PDF report is sent here — for your records, or for prepping the client's estimate later.</p>
+        <p class="hint">The PDF report is sent here. Make sure your email is entered correctly, or notify gepluto@priorityroofs.com if the PDF is never received.</p>
       </div>
 
       <div class="field">
@@ -101,7 +101,7 @@
       </div>
 
       <div class="field">
-        <label for="roofAge">Roof age (years) <span class="optional">(optional)</span></label>
+        <label for="roofAge">Estimated roof age (years) <span class="optional">(optional)</span></label>
         <input type="number" min="0" inputmode="numeric" id="roofAge" placeholder="Years" />
       </div>
 
@@ -183,9 +183,9 @@
           <div class="field">
             <span class="q-label small">Repair severity <span class="optional">(optional)</span></span>
             <div class="toggle-group" data-name="fasciaSeverity" role="radiogroup" aria-label="Fascia repair severity">
-              <button type="button" class="toggle" data-value="Mild (1-2)">Mild (1-2)</button>
-              <button type="button" class="toggle" data-value="Moderate (2-4)">Moderate (2-4)</button>
-              <button type="button" class="toggle" data-value="Extensive (5+)">Extensive (5+)</button>
+              <button type="button" class="toggle" data-value="Mild (1-2 spot repairs)">Mild (1-2 spot repairs)</button>
+              <button type="button" class="toggle" data-value="Moderate (2-4 spot repairs)">Moderate (2-4 spot repairs)</button>
+              <button type="button" class="toggle" data-value="Extensive (5+ spot repairs)">Extensive (5+ spot repairs)</button>
             </div>
           </div>
         </div>
@@ -275,6 +275,13 @@
         <label class="check-label"><input type="checkbox" id="checkSatelliteDish" class="comp-check" /> Satellite dish <span class="optional">(optional)</span></label>
         <div class="qty-row hidden-field">
           <input type="number" min="0" inputmode="numeric" id="qtySatelliteDish" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Solar panels">
+        <label class="check-label"><input type="checkbox" id="checkSolarPanels" class="comp-check" /> Solar panels <span class="optional">(optional)</span></label>
+        <div class="qty-row hidden-field">
+          <input type="number" min="0" inputmode="numeric" id="qtySolarPanels" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
         </div>
       </div>
 
