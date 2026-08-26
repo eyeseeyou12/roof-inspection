@@ -5,7 +5,7 @@
   var STORAGE_KEY = "roofAssessmentDraft";
 
   var FIELD_IDS = [
-    "address", "clientName", "reportEmail", "notes", "roofTypeOther",
+    "address", "clientName", "reportEmail", "notes", "roofTypeOther", "roofAge",
     "leakLocation", "leakCause", "collMiscDesc",
     "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
     "qtyRainCaps35", "qtyRainCaps6",
@@ -84,18 +84,24 @@
     });
   }
 
-  // ---- Toggle-group buttons (act like radio groups) ----
+  // ---- Toggle-group buttons (act like radio groups, with click-to-deselect) ----
   document.querySelectorAll(".toggle-group").forEach(function (group) {
     var name = group.dataset.name;
     group.addEventListener("click", function (e) {
       var btn = e.target.closest(".toggle");
       if (!btn || !group.contains(btn)) return;
+      var alreadySelected = btn.classList.contains("selected");
       group.querySelectorAll(".toggle").forEach(function (b) {
         b.classList.remove("selected");
       });
-      btn.classList.add("selected");
-      toggleState[name] = btn.dataset.value;
-      onToggleChanged(name, btn.dataset.value);
+      if (alreadySelected) {
+        delete toggleState[name];
+        onToggleChanged(name, "");
+      } else {
+        btn.classList.add("selected");
+        toggleState[name] = btn.dataset.value;
+        onToggleChanged(name, btn.dataset.value);
+      }
       saveDraft();
     });
   });
@@ -108,11 +114,33 @@
       var other = document.getElementById("roofTypeOther");
       other.classList.toggle("visible", value === "Other");
       if (value !== "Other") other.value = "";
+
+      var metalGroup = document.getElementById("metalTypeGroup");
+      metalGroup.classList.toggle("visible", value === "Metal");
+      if (value !== "Metal") {
+        document.getElementById("metalDeckingGroup").classList.remove("visible");
+      }
+      return;
+    }
+
+    if (name === "metalType") {
+      document.getElementById("metalDeckingGroup").classList.toggle("visible", value === "R-Panel");
       return;
     }
 
     if (name === "activeLeak") {
       document.getElementById("leakDetails").classList.toggle("visible", value === "Yes");
+      return;
+    }
+
+    if (name === "fasciaDamage") {
+      document.getElementById("fasciaDetails").classList.toggle("visible", value === "Yes");
+      return;
+    }
+
+    if (name === "stormDamage") {
+      document.getElementById("stormDetails").classList.toggle("visible", value === "Yes");
+      document.getElementById("collateral-section").classList.toggle("visible", value === "Yes");
       return;
     }
 
@@ -164,9 +192,20 @@
     var reportEmail = document.getElementById("reportEmail").value.trim();
     var notes = document.getElementById("notes").value.trim();
     var roofTypeOther = document.getElementById("roofTypeOther").value.trim();
+    var roofAge = document.getElementById("roofAge").value.trim();
 
     var roofType = toggleState.roofType || "";
-    var roofTypeLabel = roofType === "Other" && roofTypeOther ? "Other (" + roofTypeOther + ")" : roofType;
+    var metalType = toggleState.metalType || "";
+    var metalDecking = toggleState.metalDecking || "";
+    var roofTypeLabel = roofType;
+    if (roofType === "Other" && roofTypeOther) {
+      roofTypeLabel = "Other (" + roofTypeOther + ")";
+    } else if (roofType === "Metal" && metalType) {
+      roofTypeLabel = "Metal - " + metalType;
+      if (metalType === "R-Panel" && metalDecking) {
+        roofTypeLabel += " (OSB/plywood decking: " + metalDecking + ")";
+      }
+    }
 
     var components = [];
     document.querySelectorAll(".component-row").forEach(function (row) {
@@ -209,6 +248,13 @@
     var leakLocation = document.getElementById("leakLocation").value.trim();
     var leakCause = document.getElementById("leakCause").value.trim();
 
+    var fasciaDamage = toggleState.fasciaDamage || "Not recorded";
+    var fasciaTrim = fasciaDamage === "Yes" ? (toggleState.fasciaTrim || "Not recorded") : "-";
+    var fasciaSeverity = fasciaDamage === "Yes" ? (toggleState.fasciaSeverity || "Not recorded") : "-";
+
+    var stormDamage = toggleState.stormDamage || "Not recorded";
+    var stormSeverity = stormDamage === "Yes" ? (toggleState.stormSeverity || "Not recorded") : "-";
+
     var slopes = ["Left", "Right", "Front", "Back"].map(function (slope) {
       var wind = toggleState["wind" + slope] || "Not recorded";
       var hail = toggleState["hail" + slope] || "Not recorded";
@@ -238,18 +284,25 @@
       address: address,
       clientName: clientName,
       reportEmail: reportEmail,
+      jobSource: toggleState.jobSource || "Not recorded",
       notes: notes,
       soffitType: toggleState.soffitType || "Not recorded",
       soffitIntake: toggleState.soffitIntake || "Not recorded",
       gableVents: toggleState.gableVents || "Not recorded",
-      fasciaDamage: toggleState.fasciaDamage || "Not recorded",
+      fasciaDamage: fasciaDamage,
+      fasciaTrim: fasciaTrim,
+      fasciaSeverity: fasciaSeverity,
       dripEdge: toggleState.dripEdge || "Not recorded",
       roofType: roofTypeLabel || "Not recorded",
       stories: toggleState.stories || "Not recorded",
+      roofAge: roofAge || "Not recorded",
+      granuleLoss: toggleState.granuleLoss || "Not recorded",
       components: components,
       activeLeak: activeLeak,
       leakLocation: activeLeak === "Yes" && leakLocation ? leakLocation : "-",
       leakCause: activeLeak === "Yes" && leakCause ? leakCause : "-",
+      stormDamage: stormDamage,
+      stormSeverity: stormSeverity,
       slopes: slopes,
       collateral: collateral
     };
@@ -297,7 +350,29 @@
       y += 15;
     }
     doc.text("Submitted by: " + data.reportEmail, margin, y);
+    y += 15;
+    doc.text("Job source: " + data.jobSource, margin, y);
     y += 24;
+
+    ensureSpace(50);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Roof Basics", margin, y);
+    doc.autoTable({
+      startY: y + 6,
+      margin: { left: margin, right: margin },
+      theme: "grid",
+      styles: { fontSize: 10, cellPadding: 5 },
+      headStyles: { fillColor: [26, 79, 176] },
+      head: [["Item", "Answer"]],
+      body: [
+        ["Roof type", data.roofType],
+        ["Stories", data.stories],
+        ["Roof age", data.roofAge],
+        ["Granule loss / deterioration", data.granuleLoss]
+      ]
+    });
+    y = doc.lastAutoTable.finalY + 20;
 
     ensureSpace(50);
     doc.setFont("helvetica", "bold");
@@ -332,25 +407,9 @@
         ["Existing soffit intake", data.soffitIntake],
         ["Gable vents", data.gableVents],
         ["Fascia damage / rot", data.fasciaDamage],
+        ["Existing 1x2 trim", data.fasciaTrim],
+        ["Fascia repair severity", data.fasciaSeverity],
         ["Drip edge existing", data.dripEdge]
-      ]
-    });
-    y = doc.lastAutoTable.finalY + 20;
-
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Roof Basics", margin, y);
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Item", "Answer"]],
-      body: [
-        ["Roof type", data.roofType],
-        ["Stories", data.stories]
       ]
     });
     y = doc.lastAutoTable.finalY + 20;
@@ -377,35 +436,48 @@
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text("Storm Damage", margin, y);
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
-      body: data.slopes.map(function (s) {
-        return [s.slope, s.wind, s.windQty, s.hail, s.hailQty];
-      })
-    });
-    y = doc.lastAutoTable.finalY + 20;
+    y += 16;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("Storm damage: " + data.stormDamage, margin, y);
+    y += 15;
+    if (data.stormDamage === "Yes") {
+      doc.text("Overall severity: " + data.stormSeverity, margin, y);
+      y += 15;
+      doc.autoTable({
+        startY: y + 6,
+        margin: { left: margin, right: margin },
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 5 },
+        headStyles: { fillColor: [26, 79, 176] },
+        head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
+        body: data.slopes.map(function (s) {
+          return [s.slope, s.wind, s.windQty, s.hail, s.hailQty];
+        })
+      });
+      y = doc.lastAutoTable.finalY + 20;
+    } else {
+      y += 9;
+    }
 
-    ensureSpace(50);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text("Collateral Damage", margin, y);
-    doc.autoTable({
-      startY: y + 6,
-      margin: { left: margin, right: margin },
-      theme: "grid",
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [26, 79, 176] },
-      head: [["Item", "Damage"]],
-      body: data.collateral.map(function (c) {
-        return [c.name, c.value];
-      })
-    });
-    y = doc.lastAutoTable.finalY + 20;
+    if (data.stormDamage === "Yes") {
+      ensureSpace(50);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Collateral Damage", margin, y);
+      doc.autoTable({
+        startY: y + 6,
+        margin: { left: margin, right: margin },
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 5 },
+        headStyles: { fillColor: [26, 79, 176] },
+        head: [["Item", "Damage"]],
+        body: data.collateral.map(function (c) {
+          return [c.name, c.value];
+        })
+      });
+      y = doc.lastAutoTable.finalY + 20;
+    }
 
     if (data.notes) {
       ensureSpace(50);
