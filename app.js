@@ -10,10 +10,8 @@
     "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
     "qtyRainCaps35", "qtyRainCaps6",
     "qtyPipeJacks15", "qtyPipeJacks2", "qtyPipeJacks3",
-    "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtySolarPanels", "qtyRoofIntakeVent",
-    "otherDesc", "qtyOther",
-    "windQtyLeft", "hailQtyLeft", "windQtyRight", "hailQtyRight",
-    "windQtyFront", "hailQtyFront", "windQtyBack", "hailQtyBack"
+    "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtySolarPanels",
+    "otherDesc", "qtyOther"
   ];
 
   var CHECKBOX_IDS = [
@@ -214,8 +212,14 @@
       var name = row.dataset.component;
 
       if (name === "Chimney") {
-        var cricket = toggleState.chimneyCricket || "Not recorded";
-        components.push({ name: "Chimney", present: "Yes", detail: "Existing cricket: " + cricket });
+        var cricket = toggleState.chimneyCricket;
+        components.push({ name: "Chimney", present: "Yes", detail: cricket ? "Existing cricket: " + cricket : "-" });
+        return;
+      }
+
+      if (name === "Roof intake ventilation") {
+        var intakeType = toggleState.roofIntakeType;
+        components.push({ name: "Roof intake ventilation", present: "Yes", detail: intakeType || "-" });
         return;
       }
 
@@ -258,14 +262,14 @@
     var slopes = ["Left", "Right", "Front", "Back"].map(function (slope) {
       var wind = toggleState["wind" + slope] || "Not recorded";
       var hail = toggleState["hail" + slope] || "Not recorded";
-      var windQty = document.getElementById("windQty" + slope).value.trim();
-      var hailQty = document.getElementById("hailQty" + slope).value.trim();
+      var windSeverity = toggleState["windSeverity" + slope];
+      var hailSeverity = toggleState["hailSeverity" + slope];
       return {
         slope: slope,
         wind: wind,
-        windQty: wind === "Yes" && windQty ? windQty : "-",
+        windSeverity: wind === "Yes" && windSeverity ? windSeverity : "-",
         hail: hail,
-        hailQty: hail === "Yes" && hailQty ? hailQty : "-"
+        hailSeverity: hail === "Yes" && hailSeverity ? hailSeverity : "-"
       };
     });
 
@@ -459,14 +463,14 @@
             theme: "grid",
             styles: { fontSize: 10, cellPadding: 5 },
             headStyles: { fillColor: [26, 79, 176] },
-            head: [["Slope", "Wind Damage", "Wind-Damaged Shingles (Qty)", "Hail Damage", "Hail Hits (Test Square)"]],
+            head: [["Slope", "Wind Damage", "Wind Severity", "Hail Damage", "Hail Severity"]],
             body: slopeRows.map(function (s) {
               return [
                 s.slope,
                 hasValue(s.wind) ? s.wind : "",
-                hasValue(s.windQty) ? s.windQty : "",
+                hasValue(s.windSeverity) ? s.windSeverity : "",
                 hasValue(s.hail) ? s.hail : "",
-                hasValue(s.hailQty) ? s.hailQty : ""
+                hasValue(s.hailSeverity) ? s.hailSeverity : ""
               ];
             })
           });

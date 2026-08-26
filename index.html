@@ -288,7 +288,12 @@
       <div class="component-row" data-component="Roof intake ventilation">
         <label class="check-label"><input type="checkbox" id="checkRoofIntakeVent" class="comp-check" /> Roof intake ventilation <span class="optional">(optional)</span></label>
         <div class="qty-row hidden-field">
-          <input type="number" min="0" inputmode="numeric" id="qtyRoofIntakeVent" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+          <span class="q-label small">Type <span class="optional">(optional)</span></span>
+          <div class="toggle-group" data-name="roofIntakeType" role="radiogroup" aria-label="Roof intake ventilation type">
+            <button type="button" class="toggle" data-value="Soffit">Soffit</button>
+            <button type="button" class="toggle" data-value="Gable Vent">Gable Vent</button>
+            <button type="button" class="toggle" data-value="Roof Intake">Roof Intake</button>
+          </div>
         </div>
       </div>
 
@@ -328,9 +333,9 @@
         <div class="field">
           <span class="q-label">Overall severity <span class="optional">(optional)</span></span>
           <div class="toggle-group" data-name="stormSeverity" role="radiogroup" aria-label="Storm damage severity">
-            <button type="button" class="toggle" data-value="Mild (1-2)">Mild (1-2)</button>
-            <button type="button" class="toggle" data-value="Moderate (2-4)">Moderate (2-4)</button>
-            <button type="button" class="toggle" data-value="Extensive (5+)">Extensive (5+)</button>
+            <button type="button" class="toggle" data-value="Mild">Mild</button>
+            <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+            <button type="button" class="toggle" data-value="Extensive">Extensive</button>
           </div>
         </div>
 
@@ -344,7 +349,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="windQtyLeft" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+            <div id="windQtyLeft" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="windSeverityLeft" role="radiogroup" aria-label="Left slope wind damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
           <div class="field">
             <span class="q-label small">Hail damage? <span class="optional">(optional)</span></span>
@@ -352,7 +364,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="hailQtyLeft" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+            <div id="hailQtyLeft" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="hailSeverityLeft" role="radiogroup" aria-label="Left slope hail damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -364,7 +383,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="windQtyRight" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+            <div id="windQtyRight" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="windSeverityRight" role="radiogroup" aria-label="Right slope wind damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
           <div class="field">
             <span class="q-label small">Hail damage? <span class="optional">(optional)</span></span>
@@ -372,7 +398,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="hailQtyRight" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+            <div id="hailQtyRight" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="hailSeverityRight" role="radiogroup" aria-label="Right slope hail damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -384,7 +417,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="windQtyFront" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+            <div id="windQtyFront" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="windSeverityFront" role="radiogroup" aria-label="Front slope wind damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
           <div class="field">
             <span class="q-label small">Hail damage? <span class="optional">(optional)</span></span>
@@ -392,7 +432,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="hailQtyFront" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+            <div id="hailQtyFront" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="hailSeverityFront" role="radiogroup" aria-label="Front slope hail damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -404,7 +451,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="windQtyBack" class="hidden-field qty-followup" placeholder="Qty of wind-damaged shingles" />
+            <div id="windQtyBack" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="windSeverityBack" role="radiogroup" aria-label="Back slope wind damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
           <div class="field">
             <span class="q-label small">Hail damage? <span class="optional">(optional)</span></span>
@@ -412,7 +466,14 @@
               <button type="button" class="toggle" data-value="Yes">Yes</button>
               <button type="button" class="toggle" data-value="No">No</button>
             </div>
-            <input type="number" min="0" inputmode="numeric" id="hailQtyBack" class="hidden-field qty-followup" placeholder="Hail hits in test square" />
+            <div id="hailQtyBack" class="hidden-field qty-followup">
+              <span class="q-label small">Severity <span class="optional">(optional)</span></span>
+              <div class="toggle-group" data-name="hailSeverityBack" role="radiogroup" aria-label="Back slope hail damage severity">
+                <button type="button" class="toggle" data-value="Mild">Mild</button>
+                <button type="button" class="toggle" data-value="Moderate">Moderate</button>
+                <button type="button" class="toggle" data-value="Extensive">Extensive</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
