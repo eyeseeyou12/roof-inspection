@@ -2,12 +2,87 @@
   "use strict";
 
   var SEND_ENDPOINT = "/.netlify/functions/send-report";
+  var STORAGE_KEY = "roofAssessmentDraft";
+
+  var FIELD_IDS = [
+    "address", "clientName", "reportEmail", "notes", "roofTypeOther",
+    "leakLocation", "leakCause", "collMiscDesc",
+    "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
+    "qtyRainCaps35", "qtyRainCaps6",
+    "qtyPipeJacks15", "qtyPipeJacks2", "qtyPipeJacks3",
+    "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtyRoofIntakeVent",
+    "otherDesc", "qtyOther",
+    "windQtyLeft", "hailQtyLeft", "windQtyRight", "hailQtyRight",
+    "windQtyFront", "hailQtyFront", "windQtyBack", "hailQtyBack"
+  ];
+
+  var CHECKBOX_IDS = [
+    "checkBoxVents", "checkTurtleVent", "checkRidgeVent", "checkRainCaps",
+    "checkPipeJacks", "checkBathroomVent", "checkDryerVent", "checkSatelliteDish",
+    "checkRoofIntakeVent", "checkChimney", "checkOther"
+  ];
 
   var form = document.getElementById("inspection-form");
   var submitBtn = document.getElementById("submit-btn");
+  var resetBtn = document.getElementById("reset-btn");
   var statusMsg = document.getElementById("status-msg");
 
   var toggleState = {}; // name -> selected value
+
+  // ---- Draft persistence (per-device, via localStorage) ----
+  function saveDraft() {
+    var fields = {};
+    FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) fields[id] = el.value;
+    });
+    var checks = {};
+    CHECKBOX_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) checks[id] = el.checked;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ toggleState: toggleState, fields: fields, checks: checks }));
+    } catch (err) {
+      // localStorage unavailable (private browsing, full, etc.) - draft persistence just won't work
+    }
+  }
+
+  function clearDraft() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
+  }
+
+  function restoreDraft() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (err) { return; }
+    if (!raw) return;
+    var draft;
+    try { draft = JSON.parse(raw); } catch (err) { return; }
+
+    toggleState = draft.toggleState || {};
+    Object.keys(toggleState).forEach(function (name) {
+      var group = document.querySelector('.toggle-group[data-name="' + name + '"]');
+      if (!group) return;
+      var btn = group.querySelector('.toggle[data-value="' + toggleState[name] + '"]');
+      if (btn) {
+        btn.classList.add("selected");
+        onToggleChanged(name, toggleState[name]);
+      }
+    });
+
+    Object.keys(draft.fields || {}).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = draft.fields[id];
+    });
+
+    Object.keys(draft.checks || {}).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && draft.checks[id]) {
+        el.checked = true;
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+  }
 
   // ---- Toggle-group buttons (act like radio groups) ----
   document.querySelectorAll(".toggle-group").forEach(function (group) {
@@ -21,8 +96,12 @@
       btn.classList.add("selected");
       toggleState[name] = btn.dataset.value;
       onToggleChanged(name, btn.dataset.value);
+      saveDraft();
     });
   });
+
+  form.addEventListener("input", saveDraft);
+  form.addEventListener("change", saveDraft);
 
   function onToggleChanged(name, value) {
     if (name === "roofType") {
@@ -398,7 +477,14 @@
     document.querySelectorAll(".toggle.selected").forEach(function (b) { b.classList.remove("selected"); });
     document.querySelectorAll(".hidden-field.visible").forEach(function (el) { el.classList.remove("visible"); });
     document.querySelectorAll(".field-error").forEach(function (el) { el.classList.remove("field-error"); });
+    clearDraft();
   }
+
+  resetBtn.addEventListener("click", function () {
+    if (!window.confirm("Clear everything you've entered and start a new checklist?")) return;
+    resetChecklist();
+    setStatus("Checklist cleared.", "pending");
+  });
 
   // ---- Submit ----
   form.addEventListener("submit", function (e) {
@@ -443,6 +529,9 @@
         submitBtn.disabled = false;
       });
   });
+
+  // ---- Restore any in-progress draft from this device ----
+  restoreDraft();
 
   // ---- Service worker ----
   if ("serviceWorker" in navigator) {

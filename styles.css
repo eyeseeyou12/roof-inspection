@@ -343,6 +343,18 @@ textarea {
   background: var(--brand-blue-dark);
 }
 
+.reset-btn {
+  display: block;
+  margin: 0.85rem auto 0;
+  padding: 0.4rem;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .status-msg {
   min-height: 1.4rem;
   margin: 0.8rem 0 0;
