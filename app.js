@@ -126,6 +126,11 @@
       return;
     }
 
+    if (name === "valleyType") {
+      document.getElementById("metalValleyGroup").classList.toggle("visible", value === "Metal");
+      return;
+    }
+
     if (name === "activeLeak") {
       document.getElementById("leakDetails").classList.toggle("visible", value === "Yes");
       return;
@@ -203,6 +208,13 @@
       if (metalType === "R-Panel" && metalDecking) {
         roofTypeLabel += " (OSB/plywood decking: " + metalDecking + ")";
       }
+    }
+
+    var valleyType = toggleState.valleyType || "";
+    var metalValleyType = toggleState.metalValleyType || "";
+    var valleyLabel = valleyType;
+    if (valleyType === "Metal" && metalValleyType) {
+      valleyLabel = "Metal - " + metalValleyType;
     }
 
     var components = [];
@@ -301,6 +313,8 @@
       stories: toggleState.stories || "Not recorded",
       roofAge: roofAge || "Not recorded",
       granuleLoss: toggleState.granuleLoss || "Not recorded",
+      underlayment: toggleState.underlayment || "Not recorded",
+      valleys: valleyLabel || "Not recorded",
       components: components,
       activeLeak: activeLeak,
       leakLocation: activeLeak === "Yes" && leakLocation ? leakLocation : "-",
@@ -388,7 +402,9 @@
       ["Roof type", data.roofType],
       ["Stories", data.stories],
       ["Estimated roof age", data.roofAge],
-      ["Granule loss / deterioration", data.granuleLoss]
+      ["Granule loss / deterioration", data.granuleLoss],
+      ["Underlayment", data.underlayment],
+      ["Valleys", data.valleys]
     ]);
 
     if (hasValue(data.activeLeak)) {

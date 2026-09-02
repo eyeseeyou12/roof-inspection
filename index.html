@@ -113,6 +113,29 @@
           <button type="button" class="toggle" data-value="Extensive">Extensive</button>
         </div>
       </div>
+
+      <div class="field">
+        <span class="q-label">Underlayment <span class="optional">(optional)</span></span>
+        <div class="toggle-group" data-name="underlayment" role="radiogroup" aria-label="Underlayment type">
+          <button type="button" class="toggle" data-value="Felt">Felt</button>
+          <button type="button" class="toggle" data-value="Synthetic">Synthetic</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="q-label">Valleys <span class="optional">(optional)</span></span>
+        <div class="toggle-group" data-name="valleyType" role="radiogroup" aria-label="Valley type">
+          <button type="button" class="toggle" data-value="IWS">IWS</button>
+          <button type="button" class="toggle" data-value="Metal">Metal</button>
+        </div>
+        <div id="metalValleyGroup" class="hidden-field">
+          <span class="q-label small">Metal valley type <span class="optional">(optional)</span></span>
+          <div class="toggle-group" data-name="metalValleyType" role="radiogroup" aria-label="Metal valley type">
+            <button type="button" class="toggle" data-value="Open">Open</button>
+            <button type="button" class="toggle" data-value="Closed">Closed</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="h-leak">
