@@ -6,6 +6,7 @@
 
   var FIELD_IDS = [
     "address", "clientName", "reportEmail", "notes", "roofTypeOther", "roofAge",
+    "primarySlope", "steepestSlope",
     "leakLocation", "leakCause", "collMiscDesc",
     "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
     "qtyRainCaps35", "qtyRainCaps6",
@@ -196,6 +197,8 @@
     var notes = document.getElementById("notes").value.trim();
     var roofTypeOther = document.getElementById("roofTypeOther").value.trim();
     var roofAge = document.getElementById("roofAge").value.trim();
+    var primarySlope = document.getElementById("primarySlope").value.trim();
+    var steepestSlope = document.getElementById("steepestSlope").value.trim();
 
     var roofType = toggleState.roofType || "";
     var metalType = toggleState.metalType || "";
@@ -311,6 +314,8 @@
       dripEdge: toggleState.dripEdge || "Not recorded",
       roofType: roofTypeLabel || "Not recorded",
       stories: toggleState.stories || "Not recorded",
+      primarySlope: primarySlope || "Not recorded",
+      steepestSlope: steepestSlope || "Not recorded",
       roofAge: roofAge || "Not recorded",
       granuleLoss: toggleState.granuleLoss || "Not recorded",
       underlayment: toggleState.underlayment || "Not recorded",
@@ -401,6 +406,8 @@
     sectionTable("Roof Basics", [
       ["Roof type", data.roofType],
       ["Stories", data.stories],
+      ["Primary roof slope", data.primarySlope],
+      ["Steepest slope", data.steepestSlope],
       ["Estimated roof age", data.roofAge],
       ["Granule loss / deterioration", data.granuleLoss],
       ["Underlayment", data.underlayment],
