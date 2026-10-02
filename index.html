@@ -231,12 +231,42 @@
           <button type="button" class="toggle" data-value="Yes">Yes</button>
           <button type="button" class="toggle" data-value="No">No</button>
         </div>
+        <div id="dripEdgeDetails" class="hidden-field">
+          <span class="q-label small">Drip edge finish <span class="optional">(optional)</span></span>
+          <div class="toggle-group" data-name="dripEdgeFinish" role="radiogroup" aria-label="Drip edge finish">
+            <button type="button" class="toggle" data-value="Painted">Painted</button>
+            <button type="button" class="toggle" data-value="Unpainted">Unpainted</button>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="card" aria-labelledby="h-components">
       <h2 id="h-components">Existing Roof Components</h2>
       <p class="section-hint">Check what's present. Add quantities where you can.</p>
+
+      <div class="field">
+        <span class="q-label">Gutters existing? <span class="optional">(optional)</span></span>
+        <div class="toggle-group yesno" data-name="gutters" role="radiogroup" aria-label="Gutters existing">
+          <button type="button" class="toggle" data-value="Yes">Yes</button>
+          <button type="button" class="toggle" data-value="No">No</button>
+        </div>
+        <div id="gutterDetails" class="hidden-field">
+          <span class="q-label small">Gutter size <span class="optional">(optional)</span></span>
+          <div class="toggle-group" data-name="gutterSize" role="radiogroup" aria-label="Gutter size">
+            <button type="button" class="toggle" data-value="5-inch">5&quot;</button>
+            <button type="button" class="toggle" data-value="6-inch">6&quot;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-row" data-component="Rain diverters">
+        <label class="check-label"><input type="checkbox" id="checkRainDiverters" class="comp-check" /> Rain diverters <span class="optional">(optional)</span></label>
+        <div class="qty-row hidden-field">
+          <label for="qtyRainDiverters">Quantity <span class="optional">(optional)</span></label>
+          <input type="number" min="0" inputmode="numeric" id="qtyRainDiverters" class="qty-input" data-qty-label="Qty" placeholder="Qty" />
+        </div>
+      </div>
 
       <div class="component-row" data-component="Box vents">
         <label class="check-label"><input type="checkbox" id="checkBoxVents" class="comp-check" /> Box vents <span class="optional">(optional)</span></label>

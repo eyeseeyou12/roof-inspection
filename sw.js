@@ -1,4 +1,4 @@
-var CACHE_NAME = "roof-inspection-v9";
+var CACHE_NAME = "roof-inspection-v10";
 var ASSETS = [
   "./",
   "./index.html",

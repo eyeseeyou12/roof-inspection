@@ -9,14 +9,14 @@
     "primarySlope", "steepestSlope",
     "leakLocation", "leakCause", "collMiscDesc",
     "qtyBoxVents", "qtyTurtleVent", "qtyRidgeVent",
-    "qtyRainCaps35", "qtyRainCaps6",
+    "qtyRainCaps35", "qtyRainCaps6", "qtyRainDiverters",
     "qtyPipeJacks15", "qtyPipeJacks2", "qtyPipeJacks3",
     "qtyBathroomVent", "qtyDryerVent", "qtySatelliteDish", "qtySolarPanels",
     "otherDesc", "qtyOther"
   ];
 
   var CHECKBOX_IDS = [
-    "checkBoxVents", "checkTurtleVent", "checkRidgeVent", "checkRainCaps",
+    "checkRainDiverters", "checkBoxVents", "checkTurtleVent", "checkRidgeVent", "checkRainCaps",
     "checkPipeJacks", "checkBathroomVent", "checkDryerVent", "checkSatelliteDish", "checkSolarPanels",
     "checkRoofIntakeVent", "checkChimney", "checkOther"
   ];
@@ -109,6 +109,12 @@
   form.addEventListener("change", saveDraft);
 
   function onToggleChanged(name, value) {
+    if (name === "dripEdge" || name === "gutters") {
+      var detailsId = name === "dripEdge" ? "dripEdgeDetails" : "gutterDetails";
+      document.getElementById(detailsId).classList.toggle("visible", value === "Yes");
+      return;
+    }
+
     if (name === "roofType") {
       var other = document.getElementById("roofTypeOther");
       other.classList.toggle("visible", value === "Other");
@@ -221,6 +227,10 @@
     }
 
     var components = [];
+    if (toggleState.gutters) {
+      components.push({ name: "Gutters", present: toggleState.gutters,
+        detail: toggleState.gutters === "Yes" ? (toggleState.gutterSize || "") : "" });
+    }
     document.querySelectorAll(".component-row").forEach(function (row) {
       var check = row.querySelector(".comp-check");
       if (!check.checked) return;
@@ -312,6 +322,7 @@
       fasciaTrim: fasciaTrim,
       fasciaSeverity: fasciaSeverity,
       dripEdge: toggleState.dripEdge || "Not recorded",
+      dripEdgeFinish: toggleState.dripEdge === "Yes" ? (toggleState.dripEdgeFinish || "") : "",
       roofType: roofTypeLabel || "Not recorded",
       stories: toggleState.stories || "Not recorded",
       primarySlope: primarySlope || "Not recorded",
@@ -442,7 +453,8 @@
       ["Fascia damage / rot", data.fasciaDamage],
       ["Existing 1x2 trim", data.fasciaTrim],
       ["Fascia repair severity", data.fasciaSeverity],
-      ["Drip edge existing", data.dripEdge]
+      ["Drip edge existing", data.dripEdge],
+      ["Drip edge finish", data.dripEdgeFinish]
     ]);
 
     if (data.components.length) {
